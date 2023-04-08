@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 )
 
+// Dependency injection is done by defining b= afunction against a particular *application
 // Home Handler Function
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	//check if the currentl request URL path matf=ches "/"
 	// otherwise send a 404 response
 	if r.URL.Path != "/" {
@@ -19,19 +19,19 @@ func home(w http.ResponseWriter, r *http.Request) {
 	files := []string{"./ui/html/base.tmpl", "./ui/html/pages/home.tmpl", "./ui/html/partials/nav.tmpl"}
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		log.Print(err.Error())
+		app.errorLog.Print(err.Error())
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		log.Print(err.Error())
+		app.errorLog.Print(err.Error())
 		http.Error(w, "Internal Server Error", 500)
 	}
 }
 
 // snippetView Handler Function
-func snippetView(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil || id < 1 {
 		http.NotFound(w, r)
@@ -41,7 +41,7 @@ func snippetView(w http.ResponseWriter, r *http.Request) {
 }
 
 // snippetcreate Handler Function
-func snippetCreate(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost { //check request type
 		//if not post then writeheader as 405 and send a method not allowed response
 		w.Header().Set("Allow", "POST")
