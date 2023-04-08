@@ -28,22 +28,14 @@ func main() {
 		errorLog: errorLog,
 		infoLog:  infoLog,
 	}
-	//http.NewServeMux() function to init a new servermux=>equivalent to a router
-	mux := http.NewServeMux()
-	//create a file server which serves files out of the "./ui/static" directory
-	fileServer := http.FileServer(http.Dir("./ui/static"))
-	//we have to strip static prefix
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet/view", app.snippetView)
-	mux.HandleFunc("/snippet/create", app.snippetCreate)
+
 	//Initialize a new http.Server struct.We Set the addr and handler fields so
 	//that the server uses the same network uses the same net addr and routes as before.
 	//we init the ErrorLog fieldso that server uses customErrorLogger field in case of any errors
 	srv := &http.Server{
 		Addr:     *addr,
 		ErrorLog: errorLog,
-		Handler:  mux,
+		Handler:  app.routes(),
 	}
 	infoLog.Printf("Starting server on :%s", *addr)
 	// server creation
