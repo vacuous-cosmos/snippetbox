@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
 
 // The serverError helper writes an error message and stack trace to the errorLog,
@@ -41,11 +43,29 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 		return
 	}
 
+	//Executing the code in buffer to detect errors and send the appropriate response
+
+	buf := new(bytes.Buffer)
+
+	//Writing the template to buffer,If there is an error returning an appropriate error response
+
+	err := ts.ExecuteTemplate(buf, "base", data)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	//If the template is written to buffer without any error then we write the reponse
 	w.WriteHeader(status)
 
 	//Execute the template set and write the response body
-	err := ts.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		app.serverError(w, err)
+	//wrting the contents of buffer to reponseWriter object
+	buf.WriteTo(w)
+}
+
+// a new TemplateData() helper which returns a pointer to the template struct init with current year
+func (app *application) newTemplateData(r *http.Request) *templateData {
+	return &templateData{
+		CurrentYear: time.Now().Year(),
 	}
 }
