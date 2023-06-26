@@ -27,7 +27,7 @@ func main() {
 	//the flag will be stored in addr variable at runtime
 	addr := flag.String("addr", ":4000", "HTTP network address")
 	//Sql connections
-	dsn := flag.String("dsn", "web:29082000@/snippetbox?parseTime=true", "MySQL data source name")
+	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name")
 	//flag.Parse will read the command line value incase of no value default value will be provided
 	flag.Parse()
 	//using log.New to create a new log with three params first is where to output second is prefix third is format
