@@ -1,4 +1,4 @@
 # snippetbox
 
 
-#environment on debian
+#environment on fedora
